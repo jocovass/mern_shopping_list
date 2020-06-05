@@ -1,51 +1,33 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
 import { Container, ListGroup, ListGroupItem, Button } from "reactstrap";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
-import { v4 } from "uuid";
+import { getItems, deleteItem } from "../actions/itemActions";
+import PropTypes from "prop-types";
 
 class ShoppingList extends Component {
-  state = {
-    items: [
-      { id: v4(), name: "Eggs" },
-      { id: v4(), name: "Milk" },
-      { id: v4(), name: "Steak" },
-      { id: v4(), name: "Water" },
-    ],
+  componentDidMount() {
+    this.props.getItems();
+  }
+
+  onDeleteClick = (id) => {
+    this.props.deleteItem(id);
   };
 
   render() {
-    console.log(this.state);
-    const { items } = this.state;
+    const { items } = this.props;
     return (
       <Container>
-        <Button
-          color="dark"
-          style={{ marginBottom: "2rem" }}
-          onClick={() => {
-            const name = prompt("Enter Item");
-            if (name) {
-              this.setState((state) => ({
-                items: [...state.items, { id: v4(), name: name }],
-              }));
-            }
-          }}
-        >
-          Add Item
-        </Button>
         <ListGroup>
           <TransitionGroup className="shopping-list">
-            {items.map(({ id, name }) => (
-              <CSSTransition key={id} timeout={500} classNames="fade">
+            {items.map(({ _id, name }) => (
+              <CSSTransition key={_id} timeout={500} classNames="fade">
                 <ListGroupItem>
                   <Button
                     className="remove-btn"
                     color="danger"
                     size="sm"
-                    onClick={() => {
-                      this.setState((state) => ({
-                        items: state.items.filter((item) => item.id !== id),
-                      }));
-                    }}
+                    onClick={this.onDeleteClick.bind(this, _id)}
                   >
                     &times;
                   </Button>
@@ -60,4 +42,15 @@ class ShoppingList extends Component {
   }
 }
 
-export default ShoppingList;
+ShoppingList.propTypes = {
+  getItems: PropTypes.func.isRequired,
+  items: PropTypes.array.isRequired,
+};
+
+const mapStateToProps = (state) => {
+  return {
+    items: state.item.items,
+  };
+};
+
+export default connect(mapStateToProps, { getItems, deleteItem })(ShoppingList);

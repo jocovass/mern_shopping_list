@@ -1,15 +1,24 @@
 import React from "react";
+import { Provider } from "react-redux";
+import store from "./store";
 import "bootstrap/dist/css/bootstrap.min.css";
 import AppNavbar from "./components/AppNavbar";
 import ShoppingList from "./components/SoppingList";
+import ItemModal from "./components/itemModal";
+import { Container } from "reactstrap";
 import "./App.css";
 
 function App() {
   return (
-    <div className="App">
-      <AppNavbar />
-      <ShoppingList />
-    </div>
+    <Provider store={store}>
+      <div className="App">
+        <AppNavbar />
+        <Container>
+          <ItemModal />
+          <ShoppingList />
+        </Container>
+      </div>
+    </Provider>
   );
 }
 
