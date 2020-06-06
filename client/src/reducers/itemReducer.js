@@ -1,4 +1,3 @@
-import { v4 } from "uuid";
 import * as actionTypes from "../actions/types";
 
 const INITIAL_STATE = {
