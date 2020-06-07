@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import PropTypes from "prop-types";
 import {
   Button,
   Modal,
@@ -13,6 +14,10 @@ import { connect } from "react-redux";
 import { addItem } from "../actions/itemActions";
 
 class ItemModal extends Component {
+  static propTypes = {
+    isAuthenticated: PropTypes.bool,
+  };
+
   state = {
     modal: false,
     name: "",
@@ -33,7 +38,7 @@ class ItemModal extends Component {
     const newItem = {
       name: this.state.name,
     };
-
+    console.log(newItem);
     this.props.addItem(newItem);
     this.toggle();
   };
@@ -41,13 +46,18 @@ class ItemModal extends Component {
   render() {
     return (
       <div>
-        <Button
-          color="dark"
-          style={{ marginBottom: "2rem" }}
-          onClick={this.toggle}
-        >
-          Add Iem
-        </Button>
+        {this.props.isAuthenticated ? (
+          <Button
+            color="dark"
+            style={{ marginBottom: "2rem" }}
+            onClick={this.toggle}
+          >
+            Add Iem
+          </Button>
+        ) : (
+          <h4 className="mb-3 ml-4">Please log in to manage items</h4>
+        )}
+
         <Modal isOpen={this.state.modal} toggle={this.toggle}>
           <ModalHeader toggle={this.toggle}>Add To Shopping List</ModalHeader>
           <ModalBody>
@@ -73,4 +83,11 @@ class ItemModal extends Component {
   }
 }
 
-export default connect(null, { addItem })(ItemModal);
+const mapStateToProps = (state) => {
+  return {
+    item: state.item,
+    isAuthenticated: state.auth.isAuthenticated,
+  };
+};
+
+export default connect(mapStateToProps, { addItem })(ItemModal);
